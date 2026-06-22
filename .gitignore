@@ -1,0 +1,32 @@
+# IDEs
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Mac
+.DS_Store
+
+# Backend (Spring Boot / Maven)
+backend/target/
+backend/bin/
+backend/*.log
+
+# Frontend (Angular)
+frontend/dist/
+frontend/tmp/
+frontend/out-tsc/
+frontend/bazel-out/
+frontend/.angular/
+
+# Env files
+.env
+.env.local
