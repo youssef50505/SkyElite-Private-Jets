@@ -1,0 +1,238 @@
+.fleet-container {
+  min-height: 100vh;
+  background-color: var(--gray-50);
+  padding-top: 7rem;
+  padding-bottom: 4rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .fleet-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .fleet-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.fleet-wrapper {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.fleet-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.fleet-eyebrow {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.fleet-title {
+  font-size: 2.25rem;
+  font-weight: 400;
+  color: var(--gray-900);
+  letter-spacing: -0.05em;
+}
+
+@media (min-width: 768px) {
+  .fleet-title {
+    font-size: 3rem;
+  }
+}
+
+.fleet-title-muted {
+  color: var(--gray-400);
+}
+
+.fleet-desc {
+  font-size: 1.125rem;
+  color: var(--gray-500);
+  margin-top: 1rem;
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 16rem;
+}
+
+.loader-spinner {
+  border-radius: 9999px;
+  height: 3rem;
+  width: 3rem;
+  border-top: 2px solid var(--primary);
+  border-bottom: 2px solid var(--primary);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.fleet-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .fleet-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .fleet-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.fleet-card {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--gray-100);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.fleet-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-0.25rem);
+}
+
+.fleet-image-container {
+  height: 14rem;
+  background-color: var(--gray-100);
+  position: relative;
+  overflow: hidden;
+}
+
+.fleet-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fleet-image-fallback {
+  position: absolute;
+  inset: 0;
+  background-color: var(--gray-100);
+}
+
+.fleet-image-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.1;
+  transition: opacity 0.5s ease;
+  background-image: radial-gradient(var(--primary) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.fleet-card:hover .fleet-image-pattern {
+  opacity: 0.2;
+}
+
+.fleet-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.6), transparent);
+  z-index: 10;
+}
+
+.fleet-status-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 20;
+}
+
+.status-pill {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  display: inline-block;
+}
+
+.status-available {
+  background-color: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.status-maintenance {
+  background-color: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.fleet-card-body {
+  padding: 1.5rem;
+}
+
+.fleet-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 1.25rem;
+}
+
+.fleet-card-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--gray-50);
+  padding-bottom: 0.5rem;
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  color: var(--gray-400);
+}
+
+.stat-value {
+  font-weight: 500;
+  color: var(--gray-900);
+}
+
+.reserve-btn {
+  width: 100%;
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  opacity: 0.8;
+}
+
+.fleet-card:hover .reserve-btn {
+  opacity: 1;
+}
