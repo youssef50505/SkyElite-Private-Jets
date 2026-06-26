@@ -4,6 +4,7 @@ import { Landing } from './features/landing/landing';
 import { Login } from './features/auth/login/login';
 import { Register } from './features/auth/register/register';
 import { Dashboard } from './features/dashboard/dashboard';
+import { AgentPortal } from './features/agent-portal/agent-portal';
 import { Fleet } from './features/fleet/fleet';
 import { FlightSearch } from './features/flight-search/flight-search';
 import { authGuard } from './core/guards/auth.guard';
@@ -23,7 +24,7 @@ export const routes: Routes = [
   },
   { 
     path: 'agent-portal', 
-    component: Home, // Placeholder
+    component: AgentPortal,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['AGENT'] }
   },

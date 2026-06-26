@@ -1,0 +1,120 @@
+<div class="min-h-[calc(100vh-80px)] bg-background p-8">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-foreground">Agent Portal</h2>
+    <button class="btn-primary" *ngIf="activeTab === 'quoting'">Create New Quote</button>
+  </div>
+
+  <!-- Performance Overview Cards -->
+  <div class="grid grid-cols-4 gap-4 mb-8">
+    <div class="bg-surface p-4 rounded-xl border border-border shadow-sm">
+      <div class="text-sm font-medium text-muted">Monthly Earnings</div>
+      <div class="text-2xl font-bold text-foreground mt-1">${{ metrics.monthlyEarnings | number }}</div>
+    </div>
+    <div class="bg-surface p-4 rounded-xl border border-border shadow-sm">
+      <div class="text-sm font-medium text-muted">Completed Bookings</div>
+      <div class="text-2xl font-bold text-foreground mt-1">{{ metrics.totalBookings }}</div>
+    </div>
+    <div class="bg-surface p-4 rounded-xl border border-border shadow-sm">
+      <div class="text-sm font-medium text-muted">Active Quotes</div>
+      <div class="text-2xl font-bold text-foreground mt-1">{{ metrics.activeQuotes }}</div>
+    </div>
+    <div class="bg-surface p-4 rounded-xl border border-border shadow-sm">
+      <div class="text-sm font-medium text-muted">Pending Payments</div>
+      <div class="text-2xl font-bold text-foreground mt-1">{{ metrics.pendingPayments }}</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex gap-4 border-b border-border mb-6">
+    <button 
+      (click)="setTab('roster')" 
+      class="pb-3 px-2 text-sm font-medium transition-colors border-b-2"
+      [ngClass]="activeTab === 'roster' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-foreground'">
+      Client Roster
+    </button>
+    <button 
+      (click)="setTab('quoting')" 
+      class="pb-3 px-2 text-sm font-medium transition-colors border-b-2"
+      [ngClass]="activeTab === 'quoting' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-foreground'">
+      Custom Quotes
+    </button>
+  </div>
+
+  <!-- Client Roster Tab -->
+  <div *ngIf="activeTab === 'roster'" class="bg-surface rounded-xl border border-border shadow-sm overflow-hidden">
+    <table class="w-full text-left">
+      <thead class="bg-muted/10 border-b border-border">
+        <tr>
+          <th class="px-6 py-4 text-sm font-semibold text-muted">Client Name</th>
+          <th class="px-6 py-4 text-sm font-semibold text-muted">Email</th>
+          <th class="px-6 py-4 text-sm font-semibold text-muted">Phone</th>
+          <th class="px-6 py-4 text-sm font-semibold text-muted">Loyalty Status</th>
+          <th class="px-6 py-4 text-sm font-semibold text-muted text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-border">
+        <tr *ngFor="let client of clients" class="hover:bg-muted/5 transition-colors">
+          <td class="px-6 py-4">
+            <div class="font-medium text-foreground">{{ client.firstName }} {{ client.lastName }}</div>
+          </td>
+          <td class="px-6 py-4 text-sm text-muted">{{ client.email }}</td>
+          <td class="px-6 py-4 text-sm text-muted">{{ client.phoneNumber || 'N/A' }}</td>
+          <td class="px-6 py-4">
+            <span class="px-2 py-1 text-xs font-semibold rounded-full" 
+              [ngClass]="{
+                'bg-gray-100 text-gray-800': client.loyaltyStatus === 'NONE',
+                'bg-amber-100 text-amber-800': client.loyaltyStatus === 'GOLD',
+                'bg-slate-100 text-slate-800': client.loyaltyStatus === 'SILVER',
+                'bg-sky-100 text-sky-800': client.loyaltyStatus === 'PLATINUM'
+              }">
+              {{ client.loyaltyStatus }}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <button class="text-primary hover:underline text-sm font-medium">Book Flight</button>
+          </td>
+        </tr>
+        <tr *ngIf="clients.length === 0">
+          <td colspan="5" class="px-6 py-8 text-center text-muted">No clients found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Quoting Tab -->
+  <div *ngIf="activeTab === 'quoting'" class="bg-surface rounded-xl border border-border shadow-sm overflow-hidden">
+    <table class="w-full text-left">
+      <thead class="bg-muted/10 border-b border-border">
+        <tr>
+          <th class="px-6 py-4 text-sm font-semibold text-muted">Quote ID</th>
+          <th class="px-6 py-4 text-sm font-semibold text-muted">Client Name</th>
+          <th class="px-6 py-4 text-sm font-semibold text-muted">Route</th>
+          <th class="px-6 py-4 text-sm font-semibold text-muted">Amount</th>
+          <th class="px-6 py-4 text-sm font-semibold text-muted">Status</th>
+          <th class="px-6 py-4 text-sm font-semibold text-muted text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-border">
+        <tr *ngFor="let quote of recentQuotes" class="hover:bg-muted/5 transition-colors">
+          <td class="px-6 py-4 text-sm font-medium text-foreground">{{ quote.id }}</td>
+          <td class="px-6 py-4 text-sm text-foreground">{{ quote.client }}</td>
+          <td class="px-6 py-4 text-sm text-muted">{{ quote.route }}</td>
+          <td class="px-6 py-4 text-sm font-medium text-foreground">${{ quote.amount | number }}</td>
+          <td class="px-6 py-4">
+            <span class="px-2 py-1 text-xs font-semibold rounded-full" 
+              [ngClass]="{
+                'bg-green-100 text-green-800': quote.status === 'Accepted',
+                'bg-blue-100 text-blue-800': quote.status === 'Sent',
+                'bg-gray-100 text-gray-800': quote.status === 'Draft'
+              }">
+              {{ quote.status }}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <button class="text-primary hover:underline text-sm font-medium">View</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
