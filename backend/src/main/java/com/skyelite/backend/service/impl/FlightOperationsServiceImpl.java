@@ -59,6 +59,14 @@ public class FlightOperationsServiceImpl implements FlightOperationsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public FlightResponse getFlightById(UUID id) {
+        Flight flight = flightRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Flight not found with ID: " + id));
+        return flightMapper.toResponse(flight);
+    }
+
+    @Override
     @Transactional
     public void updateFlightStatus(UUID flightId, String status) {
         Flight flight = flightRepository.findById(flightId)

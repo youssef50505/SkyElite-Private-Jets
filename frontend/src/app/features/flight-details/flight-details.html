@@ -1,0 +1,166 @@
+<div class="min-h-screen bg-background pb-20">
+  
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @else if (!flight) {
+    <div class="container mx-auto px-4 pt-10 text-center">
+      <h2 class="text-2xl font-bold text-foreground mb-4">Flight Not Found</h2>
+      <button routerLink="/search" class="btn-primary">Return to Search</button>
+    </div>
+  }
+
+  <!-- Flight Details -->
+  @else {
+    <!-- Hero Image Section -->
+    <div class="w-full h-[400px] bg-gray-200 relative">
+      <img [src]="flight.aircraft.imageUrl || 'assets/placeholder-jet.jpg'" alt="Private Jet" class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+      
+      <div class="absolute bottom-0 left-0 right-0 p-8 container mx-auto text-white">
+        <div class="flex items-center gap-4 mb-2">
+          <span class="bg-primary px-3 py-1 rounded-full text-sm font-bold shadow-lg">{{ flight.flightType }}</span>
+          <span class="text-white/80 font-medium tracking-wider">{{ flight.flightNumber }}</span>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold mb-2">{{ flight.departureAirportIata }} to {{ flight.arrivalAirportIata }}</h1>
+        <p class="text-lg text-white/90">Operated by SkyElite • {{ flight.aircraft.model }}</p>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 pt-10">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left Column: Details & Amenities -->
+        <div class="lg:col-span-2 space-y-8">
+          
+          <!-- Flight Schedule -->
+          <section class="bg-surface rounded-2xl border border-border p-8 shadow-sm">
+            <h2 class="text-2xl font-bold text-foreground mb-6">Flight Schedule</h2>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+              <div class="text-center md:text-left">
+                <p class="text-sm text-muted uppercase tracking-wider font-semibold mb-1">Departure</p>
+                <p class="text-3xl font-bold text-foreground">{{ flight.scheduledDeparture | date:'h:mm a' }}</p>
+                <p class="text-lg text-muted">{{ flight.departureAirportIata }}</p>
+                <p class="text-sm text-muted mt-1">{{ flight.scheduledDeparture | date:'mediumDate' }}</p>
+              </div>
+              
+              <div class="flex-1 flex items-center justify-center relative w-full md:w-auto">
+                <div class="h-px bg-border w-full absolute top-1/2"></div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary relative bg-surface px-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              </div>
+              
+              <div class="text-center md:text-right">
+                <p class="text-sm text-muted uppercase tracking-wider font-semibold mb-1">Arrival</p>
+                <p class="text-3xl font-bold text-foreground">{{ flight.scheduledArrival | date:'h:mm a' }}</p>
+                <p class="text-lg text-muted">{{ flight.arrivalAirportIata }}</p>
+                <p class="text-sm text-muted mt-1">{{ flight.scheduledArrival | date:'mediumDate' }}</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Amenities -->
+          <section class="bg-surface rounded-2xl border border-border p-8 shadow-sm">
+            <h2 class="text-2xl font-bold text-foreground mb-6">Onboard Experience</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+              @for (amenity of flight.amenities; track amenity) {
+                <div class="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                  <span class="font-medium text-foreground">{{ amenity }}</span>
+                </div>
+              }
+              @empty {
+                <p class="text-muted col-span-full">Standard premium amenities included.</p>
+              }
+            </div>
+          </section>
+
+          <!-- Placeholder Reviews -->
+          <section class="bg-surface rounded-2xl border border-border p-8 shadow-sm">
+            <h2 class="text-2xl font-bold text-foreground mb-6">Passenger Reviews</h2>
+            <div class="space-y-6">
+              <div class="border-b border-border pb-6">
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="flex text-yellow-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                  </div>
+                  <span class="font-bold text-foreground">Incredible Experience</span>
+                </div>
+                <p class="text-muted italic mb-3">"The flight from {{ flight.departureAirportIata }} was perfectly smooth. The amenities were top-notch and the crew was incredibly attentive. Highly recommend this route with SkyElite."</p>
+                <p class="text-sm font-medium text-foreground">- Alexander W.</p>
+              </div>
+
+              <div>
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="flex text-yellow-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300 dark:text-gray-600" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                  </div>
+                  <span class="font-bold text-foreground">Effortless travel</span>
+                </div>
+                <p class="text-muted italic mb-3">"Very relaxing flight. The seats were spacious. The food could have been slightly better, but overall a great experience."</p>
+                <p class="text-sm font-medium text-foreground">- Sarah M.</p>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- Right Column: Booking Box -->
+        <div class="lg:col-span-1">
+          <div class="bg-surface rounded-2xl border border-border p-6 shadow-xl sticky top-24">
+            <h3 class="text-xl font-bold text-foreground mb-4">Book This Flight</h3>
+            
+            <div class="space-y-4 mb-8">
+              @if (flight.economyPrice) {
+                <div class="flex justify-between items-center p-3 rounded-lg border border-border hover:border-primary cursor-pointer transition">
+                  <div>
+                    <p class="font-bold text-foreground">Economy</p>
+                    <p class="text-xs text-muted">Standard seating</p>
+                  </div>
+                  <p class="text-xl font-bold text-primary">{{ flight.economyPrice | currency }}</p>
+                </div>
+              }
+              
+              @if (flight.businessPrice) {
+                <div class="flex justify-between items-center p-3 rounded-lg border border-border hover:border-primary cursor-pointer transition">
+                  <div>
+                    <p class="font-bold text-foreground flex items-center gap-2">Business <span class="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full uppercase">Popular</span></p>
+                    <p class="text-xs text-muted">Premium seating & dining</p>
+                  </div>
+                  <p class="text-xl font-bold text-primary">{{ flight.businessPrice | currency }}</p>
+                </div>
+              }
+
+              @if (flight.firstClassPrice) {
+                <div class="flex justify-between items-center p-3 rounded-lg border border-border hover:border-primary cursor-pointer transition">
+                  <div>
+                    <p class="font-bold text-foreground flex items-center gap-2">First Class</p>
+                    <p class="text-xs text-muted">Ultimate luxury</p>
+                  </div>
+                  <p class="text-xl font-bold text-primary">{{ flight.firstClassPrice | currency }}</p>
+                </div>
+              }
+            </div>
+
+            <button (click)="bookFlight()" class="btn-primary w-full h-[50px] text-lg mb-4">Select & Book</button>
+            <p class="text-xs text-center text-muted">No hidden fees. Cancellation up to 24h before departure.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  }
+</div>

@@ -16,21 +16,8 @@ async function seed() {
     const now = new Date().toISOString();
     const defaultPasswordHash = bcrypt.hashSync('password123', 10);
 
-    console.log("Clearing existing data...");
-    await client.query(`
-      DELETE FROM refund_requests;
-      DELETE FROM payments;
-      DELETE FROM charter_bookings;
-      DELETE FROM flight_amenities;
-      DELETE FROM flights;
-      DELETE FROM users;
-      DELETE FROM passenger_preferences;
-      DELETE FROM passenger_profiles;
-      DELETE FROM pricing_rules;
-      DELETE FROM maintenance_logs;
-      DELETE FROM aircrafts;
-      DELETE FROM airports;
-    `);
+    console.log("Adding to existing data (no deletion)...");
+
 
     console.log("Generating Airports...");
     const airports = [];
@@ -81,6 +68,14 @@ async function seed() {
     console.log("Generating Aircrafts...");
     const aircrafts = [];
     const statuses = ['AVAILABLE', 'MAINTENANCE', 'IN_FLIGHT'];
+    const realJetImages = [
+      'https://images.unsplash.com/photo-1540962351504-03099e0a754b?q=80&w=1000&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1590492873420-56f87425f187?q=80&w=1000&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1605281317010-fe5ffe798166?q=80&w=1000&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1583375836263-225e36d4003d?q=80&w=1000&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1563821731671-5582f6eaf72e?q=80&w=1000&auto=format&fit=crop'
+    ];
+
     for (let i = 0; i < 12; i++) {
       const id = uuid();
       await client.query(`
@@ -94,7 +89,7 @@ async function seed() {
         faker.number.int({ min: 1000, max: 6000 }),
         faker.commerce.price({ min: 2000, max: 15000 }),
         faker.helpers.arrayElement(airports),
-        faker.image.url(),
+        faker.helpers.arrayElement(realJetImages),
         faker.helpers.arrayElement(statuses),
         now, now
       ]);

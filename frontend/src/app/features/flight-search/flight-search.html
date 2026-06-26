@@ -76,7 +76,7 @@
 
       <div class="flex flex-col gap-6">
         @for (flight of filteredFlights; track flight.id) {
-          <div class="bg-surface rounded-2xl border border-border shadow-sm hover:shadow-md transition overflow-hidden">
+          <div [routerLink]="['/flight', flight.id]" class="bg-surface cursor-pointer rounded-2xl border border-border shadow-sm hover:shadow-md transition overflow-hidden">
             <!-- Flight Header -->
             <div class="px-6 py-4 border-b border-border flex flex-col md:flex-row justify-between items-start md:items-center bg-gray-50/50 dark:bg-gray-800/50">
               <div class="flex items-center gap-3">

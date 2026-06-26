@@ -7,6 +7,7 @@ import { Dashboard } from './features/dashboard/dashboard';
 import { AgentPortal } from './features/agent-portal/agent-portal';
 import { Fleet } from './features/fleet/fleet';
 import { FlightSearch } from './features/flight-search/flight-search';
+import { FlightDetails } from './features/flight-details/flight-details';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 
@@ -16,6 +17,7 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'register', component: Register },
   { path: 'search', component: FlightSearch },
+  { path: 'flight/:id', component: FlightDetails },
   { 
     path: 'dashboard', 
     component: Dashboard,

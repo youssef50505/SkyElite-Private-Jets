@@ -14,6 +14,10 @@ export class FlightService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
+  getFlightById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
   searchFlights(origin: string, destination: string): Observable<any[]> {
     let params = new HttpParams().set('origin', origin).set('destination', destination);
     return this.http.get<any[]>(`${this.apiUrl}/search`, { params });

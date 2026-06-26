@@ -11,5 +11,6 @@ public interface FlightOperationsService {
     List<FlightResponse> getAllFlights();
     List<FlightResponse> searchFlights(String origin, String destination);
     List<FlightResponse> getFeaturedEmptyLegs();
+    FlightResponse getFlightById(UUID id);
     void updateFlightStatus(UUID flightId, String status);
 }

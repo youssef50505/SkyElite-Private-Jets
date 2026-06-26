@@ -25,6 +25,11 @@ public class FlightController {
         return ResponseEntity.ok(flightOperationsService.getAllFlights());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<FlightResponse> getFlightById(@PathVariable UUID id) {
+        return ResponseEntity.ok(flightOperationsService.getFlightById(id));
+    }
+
     @GetMapping("/search")
     public ResponseEntity<List<FlightResponse>> searchFlights(@RequestParam String origin, @RequestParam String destination) {
         return ResponseEntity.ok(flightOperationsService.searchFlights(origin, destination));
