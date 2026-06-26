@@ -1,46 +1,46 @@
-<nav class="w-full bg-white/80 dark:bg-ink/80 backdrop-blur-lg shadow-sm fixed top-0 z-50 py-4 px-8 flex items-center justify-between border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
+<nav class="w-full bg-surface/80 backdrop-blur-lg shadow-sm fixed top-0 z-50 py-4 px-8 flex items-center justify-between border-b border-border transition-colors duration-300">
   <div class="flex items-center gap-4">
     <img src="ntg-logo.png" alt="NTG Logo" class="h-8" />
-    <div class="text-2xl font-semibold tracking-tight text-ink dark:text-gray-100">Ascend Global</div>
+    <div class="text-2xl font-semibold tracking-tight text-foreground">Ascend Global</div>
   </div>
   
   <div class="hidden md:flex items-center gap-10">
-    <a routerLink="/home" class="text-ink dark:text-gray-100 font-medium hover:text-primary transition">Home</a>
+    <a routerLink="/home" class="text-foreground font-medium hover:text-primary transition">Home</a>
     
     @if (!authService.isAuthenticated()) {
-      <a routerLink="/search" class="text-ink dark:text-gray-100 font-medium hover:text-primary transition">Search Flights</a>
+      <a routerLink="/search" class="text-foreground font-medium hover:text-primary transition">Search Flights</a>
     } @else {
       @if (authService.getUserRole() === 'PASSENGER') {
-        <a routerLink="/search" class="text-ink dark:text-gray-100 font-medium hover:text-primary transition">Search Flights</a>
-        <a routerLink="/dashboard" class="text-ink dark:text-gray-100 font-medium hover:text-primary transition">My Dashboard</a>
+        <a routerLink="/search" class="text-foreground font-medium hover:text-primary transition">Search Flights</a>
+        <a routerLink="/dashboard" class="text-foreground font-medium hover:text-primary transition">My Dashboard</a>
       }
       @if (authService.getUserRole() === 'AGENT') {
-        <a routerLink="/search" class="text-ink dark:text-gray-100 font-medium hover:text-primary transition">Search Flights</a>
-        <a routerLink="/agent-portal" class="text-ink dark:text-gray-100 font-medium hover:text-primary transition">Agent Portal</a>
+        <a routerLink="/search" class="text-foreground font-medium hover:text-primary transition">Search Flights</a>
+        <a routerLink="/agent-portal" class="text-foreground font-medium hover:text-primary transition">Agent Portal</a>
       }
       @if (authService.getUserRole() === 'OPERATIONS') {
-        <a routerLink="/operations" class="text-ink dark:text-gray-100 font-medium hover:text-primary transition">Operations Center</a>
-        <a routerLink="/fleet" class="text-ink dark:text-gray-100 font-medium hover:text-primary transition">Fleet Command</a>
+        <a routerLink="/operations" class="text-foreground font-medium hover:text-primary transition">Operations Center</a>
+        <a routerLink="/fleet" class="text-foreground font-medium hover:text-primary transition">Fleet Command</a>
       }
       @if (authService.getUserRole() === 'ADMIN') {
-        <a routerLink="/operations" class="text-ink dark:text-gray-100 font-medium hover:text-primary transition">Operations Center</a>
-        <a routerLink="/fleet" class="text-ink dark:text-gray-100 font-medium hover:text-primary transition">Fleet Command</a>
-        <a routerLink="/analytics" class="text-ink dark:text-gray-100 font-medium hover:text-primary transition">Analytics & Revenue</a>
+        <a routerLink="/operations" class="text-foreground font-medium hover:text-primary transition">Operations Center</a>
+        <a routerLink="/fleet" class="text-foreground font-medium hover:text-primary transition">Fleet Command</a>
+        <a routerLink="/analytics" class="text-foreground font-medium hover:text-primary transition">Analytics & Revenue</a>
       }
     }
   </div>
 
   <div class="flex items-center gap-4">
-    <button (click)="toggleDarkMode()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer" title="Toggle Dark Mode">
+    <button (click)="toggleDarkMode()" class="p-2 rounded-full hover:bg-muted/20 transition-colors cursor-pointer" title="Toggle Dark Mode">
       @if (!isDarkMode) {
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-ink dark:text-gray-100" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
       } @else {
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-ink dark:text-gray-100" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
       }
     </button>
     
     @if (!authService.isAuthenticated()) {
-      <button routerLink="/login" class="text-ink dark:text-gray-100 font-medium hover:text-primary transition">Log In</button>
+      <button routerLink="/login" class="text-foreground font-medium hover:text-primary transition">Log In</button>
       <button routerLink="/register" class="btn-primary">Register</button>
     } @else {
       <div class="flex items-center gap-3">

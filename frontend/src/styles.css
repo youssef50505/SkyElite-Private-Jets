@@ -4,10 +4,33 @@
 
 @layer base {
   :root {
-    --color-primary: #1E3A8A;
-    --color-secondary: #DC2626;
-    --color-accent: #38BDF8;
-    --color-ink: #111827;
+    /* Semantic Colors - Light Mode (RGB format for opacity support) */
+    --color-background: 249 250 251;  /* #F9FAFB */
+    --color-surface: 255 255 255;     /* #FFFFFF */
+    --color-foreground: 17 24 39;     /* #111827 */
+    --color-muted: 107 114 128;       /* #6B7280 */
+    --color-border: 229 231 235;      /* #E5E7EB */
+    
+    /* Brand Colors */
+    --color-primary: 30 58 138;       /* #1E3A8A */
+    --color-primary-foreground: 255 255 255; /* #FFFFFF */
+    --color-secondary: 220 38 38;     /* #DC2626 */
+    --color-accent: 56 189 248;       /* #38BDF8 */
+  }
+
+  .dark {
+    /* Semantic Colors - Dark Mode */
+    --color-background: 17 24 39;     /* #111827 */
+    --color-surface: 31 41 55;        /* #1F2937 */
+    --color-foreground: 249 250 251;  /* #F9FAFB */
+    --color-muted: 156 163 175;       /* #9CA3AF */
+    --color-border: 55 65 81;         /* #374151 */
+    
+    /* Brand Colors */
+    --color-primary: 59 130 246;      /* #3B82F6 */
+    --color-primary-foreground: 255 255 255; /* #FFFFFF */
+    --color-secondary: 239 68 68;     /* #EF4444 */
+    --color-accent: 56 189 248;       /* #38BDF8 */
   }
 }
 
