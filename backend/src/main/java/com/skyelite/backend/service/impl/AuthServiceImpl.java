@@ -35,7 +35,7 @@ public class AuthServiceImpl implements AuthService {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String role = userDetails.getAuthorities().iterator().next().getAuthority();
+        String role = userDetails.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "");
 
         return new JwtAuthenticationResponse(jwt, "Bearer", userDetails.getUsername(), role);
     }
