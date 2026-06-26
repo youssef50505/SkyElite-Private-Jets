@@ -34,6 +34,29 @@ async function seed() {
 
     console.log("Generating Airports...");
     const airports = [];
+
+    const staticAirports = [
+      { iata: 'JFK', name: 'John F. Kennedy International Airport', city: 'New York', country: 'USA' },
+      { iata: 'LHR', name: 'London Heathrow Airport', city: 'London', country: 'UK' },
+      { iata: 'DXB', name: 'Dubai International Airport', city: 'Dubai', country: 'UAE' },
+      { iata: 'CDG', name: 'Charles de Gaulle Airport', city: 'Paris', country: 'France' },
+      { iata: 'LAX', name: 'Los Angeles International Airport', city: 'Los Angeles', country: 'USA' }
+    ];
+
+    for (const apt of staticAirports) {
+      const res = await client.query(`
+        INSERT INTO airports (iata_code, icao_code, name, city, country, latitude, longitude, landing_fee, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        ON CONFLICT (iata_code) DO NOTHING
+        RETURNING iata_code;
+      `, [
+        apt.iata, apt.iata + 'X', apt.name, apt.city, apt.country,
+        faker.location.latitude(), faker.location.longitude(), faker.commerce.price({ min: 500, max: 2000 }),
+        now, now
+      ]);
+      if (res.rows[0]) airports.push(res.rows[0].iata_code);
+    }
+
     for (let i = 0; i < 15; i++) {
       const iata = faker.airline.airport().iataCode;
       const res = await client.query(`
@@ -151,6 +174,41 @@ async function seed() {
     const flights = [];
     const flightTypes = ['CHARTER', 'EMPTY_LEG', 'MAINTENANCE'];
     const flightStatuses = ['SCHEDULED', 'EN_ROUTE', 'LANDED', 'CANCELLED'];
+
+    const staticFlightRoutes = [
+      ['JFK', 'LHR'],
+      ['LHR', 'DXB'],
+      ['DXB', 'CDG'],
+      ['CDG', 'JFK'],
+      ['LAX', 'JFK'],
+      ['LHR', 'LAX']
+    ];
+
+    for (const route of staticFlightRoutes) {
+      const id = uuid();
+      await client.query(`
+        INSERT INTO flights (id, aircraft_id, departure_airport_iata, arrival_airport_iata, scheduled_departure, scheduled_arrival, actual_departure, actual_arrival, flight_type, flight_number, economy_price, premium_economy_price, business_price, first_class_price, status, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+      `, [
+        id,
+        faker.helpers.arrayElement(aircrafts),
+        route[0],
+        route[1],
+        faker.date.future(),
+        faker.date.future(),
+        null, null,
+        'CHARTER',
+        'SE' + faker.number.int({ min: 100, max: 999 }),
+        faker.commerce.price({ min: 500, max: 1500 }),
+        faker.commerce.price({ min: 1500, max: 3000 }),
+        faker.commerce.price({ min: 3000, max: 6000 }),
+        faker.commerce.price({ min: 6000, max: 12000 }),
+        'SCHEDULED',
+        now, now
+      ]);
+      flights.push(id);
+    }
+
     for (let i = 0; i < 15; i++) {
       const id = uuid();
       await client.query(`

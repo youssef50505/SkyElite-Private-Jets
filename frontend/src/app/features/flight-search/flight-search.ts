@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FlightService } from '../../core/services/flight.service';
 
 @Component({
@@ -12,9 +12,9 @@ import { FlightService } from '../../core/services/flight.service';
 })
 export class FlightSearch implements OnInit {
   searchForm: FormGroup;
-  flights: any[] = [];
-  loading = false;
-  hasSearched = false;
+  allFlights: any[] = [];
+  filteredFlights: any[] = [];
+  loading = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -23,58 +23,62 @@ export class FlightSearch implements OnInit {
     private flightService: FlightService
   ) {
     this.searchForm = this.fb.group({
-      origin: ['', Validators.required],
-      destination: ['', Validators.required],
+      origin: [''],
+      destination: [''],
       date: [''],
       passengers: ['1']
     });
   }
 
   ngOnInit(): void {
-    // Read query params on load to perform initial search if navigating from homepage
-    this.route.queryParams.subscribe(params => {
-      if (params['origin'] && params['destination']) {
-        this.searchForm.patchValue({
-          origin: params['origin'],
-          destination: params['destination'],
-          date: params['date'] || '',
-          passengers: params['passengers'] || '1'
+    this.loadAllFlights();
+  }
+
+  private loadAllFlights(): void {
+    this.flightService.getAllFlights().subscribe({
+      next: (results) => {
+        this.allFlights = results;
+        this.loading = false;
+        
+        // After loading all flights, process query params
+        this.route.queryParams.subscribe(params => {
+          this.searchForm.patchValue({
+            origin: params['origin'] || '',
+            destination: params['destination'] || '',
+            date: params['date'] || '',
+            passengers: params['passengers'] || '1'
+          });
+          this.filterFlights(params['origin'], params['destination'], params['date']);
         });
-        this.performSearch(params['origin'], params['destination']);
+      },
+      error: (err) => {
+        console.error('Error fetching flights:', err);
+        this.loading = false;
       }
     });
   }
 
   onSearchSubmit(): void {
-    if (this.searchForm.valid) {
-      const formValue = this.searchForm.value;
-      // Update URL query params without reloading the page, triggering the subscription
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: {
-          origin: formValue.origin,
-          destination: formValue.destination,
-          date: formValue.date,
-          passengers: formValue.passengers
-        },
-        queryParamsHandling: 'merge'
-      });
-    }
+    const formValue = this.searchForm.value;
+    // Update URL query params without reloading the page, triggering the subscription
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        origin: formValue.origin,
+        destination: formValue.destination,
+        date: formValue.date,
+        passengers: formValue.passengers
+      },
+      queryParamsHandling: 'merge'
+    });
   }
 
-  private performSearch(origin: string, destination: string): void {
-    this.loading = true;
-    this.hasSearched = true;
-    this.flightService.searchFlights(origin, destination).subscribe({
-      next: (results) => {
-        this.flights = results;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error fetching flights:', err);
-        this.flights = [];
-        this.loading = false;
-      }
+  private filterFlights(origin?: string, destination?: string, date?: string): void {
+    this.filteredFlights = this.allFlights.filter(f => {
+      const matchOrigin = !origin || f.departureAirportIata.toLowerCase().includes(origin.toLowerCase());
+      const matchDest = !destination || f.arrivalAirportIata.toLowerCase().includes(destination.toLowerCase());
+      const matchDate = !date || (f.scheduledDeparture && f.scheduledDeparture.startsWith(date));
+      return matchOrigin && matchDest && matchDate;
     });
   }
 }
