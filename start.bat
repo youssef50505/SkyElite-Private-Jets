@@ -16,7 +16,7 @@ if %ERRORLEVEL% neq 0 (
 
 where java >nul 2>nul
 if %ERRORLEVEL% neq 0 (
-    echo [ERROR] Java is not installed. Please install Java (JDK 21+) to continue.
+    echo [ERROR] Java is not installed. Please install Java JDK 21 or higher to continue.
     pause
     exit /b 1
 )
