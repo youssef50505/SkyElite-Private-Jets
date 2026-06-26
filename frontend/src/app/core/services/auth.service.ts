@@ -6,7 +6,7 @@ import { Observable, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = '/api/v1/auth';
+  private apiUrl = 'http://localhost:8080/api/v1/auth';
   
   private tokenSignal = signal<string | null>(localStorage.getItem('token'));
   private roleSignal = signal<string | null>(localStorage.getItem('role'));
