@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {FlightMapper.class})
+@Mapper(componentModel = "spring", uses = {FlightMapper.class, UserMapper.class})
 public interface CharterBookingMapper {
 
     CharterBookingResponse toResponse(CharterBooking booking);

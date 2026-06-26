@@ -1,12 +1,49 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './features/home/home/home.component';
+import { Home } from './features/home/home';
+import { Landing } from './features/landing/landing';
+import { Login } from './features/auth/login/login';
+import { Register } from './features/auth/register/register';
+import { Dashboard } from './features/dashboard/dashboard';
+import { Fleet } from './features/fleet/fleet';
+import { FlightSearch } from './features/flight-search/flight-search';
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'fleet', loadComponent: () => import('./features/fleet/fleet/fleet.component').then(m => m.FleetComponent) },
-  { path: 'booking', loadComponent: () => import('./features/booking/booking-wizard/booking-wizard.component').then(m => m.BookingWizardComponent) },
-  { path: 'login', loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent) },
-  { path: 'register', loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent) },
-  { path: 'dashboard', loadComponent: () => import('./features/dashboard/dashboard/dashboard.component').then(m => m.DashboardComponent), canActivate: [authGuard] },
+  { path: '', component: Landing },
+  { path: 'home', component: Home },
+  { path: 'login', component: Login },
+  { path: 'register', component: Register },
+  { path: 'search', component: FlightSearch },
+  { 
+    path: 'dashboard', 
+    component: Dashboard,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['PASSENGER'] }
+  },
+  { 
+    path: 'agent-portal', 
+    component: Home, // Placeholder
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['AGENT'] }
+  },
+  { 
+    path: 'operations', 
+    component: Home, // Placeholder
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['OPERATIONS', 'ADMIN'] }
+  },
+  { 
+    path: 'fleet', 
+    component: Fleet,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['OPERATIONS', 'ADMIN'] }
+  },
+  { 
+    path: 'analytics', 
+    component: Home, // Placeholder
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] }
+  },
+  { path: '**', redirectTo: '' }
 ];

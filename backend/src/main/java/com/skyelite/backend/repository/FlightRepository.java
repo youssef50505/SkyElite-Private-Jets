@@ -17,4 +17,7 @@ public interface FlightRepository extends JpaRepository<Flight, UUID> {
     
     @EntityGraph(attributePaths = {"aircraft"})
     List<Flight> findByDepartureAirportIataAndArrivalAirportIata(String dep, String arr);
+
+    @EntityGraph(attributePaths = {"aircraft"})
+    List<Flight> findTop5ByFlightTypeAndStatusOrderByScheduledDepartureAsc(Flight.FlightType flightType, Flight.FlightStatus status);
 }

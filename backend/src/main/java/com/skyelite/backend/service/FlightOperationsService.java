@@ -9,5 +9,7 @@ import java.util.UUID;
 public interface FlightOperationsService {
     FlightResponse scheduleFlight(CreateFlightRequest request);
     List<FlightResponse> getAllFlights();
+    List<FlightResponse> searchFlights(String origin, String destination);
+    List<FlightResponse> getFeaturedEmptyLegs();
     void updateFlightStatus(UUID flightId, String status);
 }

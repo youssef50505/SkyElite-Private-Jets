@@ -16,6 +16,11 @@ public record FlightResponse(
         LocalDateTime actualArrival,
         Flight.FlightType flightType,
         String flightNumber,
-        java.math.BigDecimal basePrice,
+        Integer stopsCount,
+        java.util.List<String> amenities,
+        java.math.BigDecimal economyPrice,
+        java.math.BigDecimal premiumEconomyPrice,
+        java.math.BigDecimal businessPrice,
+        java.math.BigDecimal firstClassPrice,
         Flight.FlightStatus status
 ) {}

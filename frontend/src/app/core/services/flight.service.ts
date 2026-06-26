@@ -1,26 +1,34 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface FlightResponse {
-  id: string;
-  departureAirportIata: string;
-  arrivalAirportIata: string;
-  scheduledDeparture: string;
-  scheduledArrival: string;
-  status: string;
-  aircraftId: string;
-  flightType: string;
-  flightNumber?: string;
-  basePrice?: number;
-}
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class FlightService {
-  private readonly API_URL = 'http://localhost:8080/api/flights';
+  private apiUrl = '/api/v1/flights';
+
   constructor(private http: HttpClient) {}
 
-  searchFlights(departure: string, arrival: string, date: string): Observable<FlightResponse[]> {
-    return this.http.get<FlightResponse[]>(`${this.API_URL}/search?departure=${departure}&arrival=${arrival}&date=${date}`);
+  getAllFlights(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
+  }
+
+  searchFlights(origin: string, destination: string): Observable<any[]> {
+    let params = new HttpParams().set('origin', origin).set('destination', destination);
+    return this.http.get<any[]>(`${this.apiUrl}/search`, { params });
+  }
+
+  getFeaturedFlights(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/featured`);
+  }
+
+  scheduleFlight(flightData: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, flightData);
+  }
+
+  updateFlightStatus(id: string, status: string): Observable<void> {
+    let params = new HttpParams().set('status', status);
+    return this.http.patch<void>(`${this.apiUrl}/${id}/status`, null, { params });
   }
 }

@@ -22,5 +22,12 @@ public interface FlightMapper {
     @Mapping(target = "actualArrival", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "stopsCount", ignore = true)
+    @Mapping(target = "amenities", ignore = true)
+    @Mapping(target = "economyPrice", ignore = true)
+    @Mapping(target = "premiumEconomyPrice", ignore = true)
+    @Mapping(target = "businessPrice", ignore = true)
+    @Mapping(target = "firstClassPrice", ignore = true)
+    @Mapping(target = "flightNumber", ignore = true)
     Flight toEntity(CreateFlightRequest request);
 }

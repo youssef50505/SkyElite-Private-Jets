@@ -11,6 +11,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AircraftMapper {
 
+    @Mapping(target = "currentLocationIata", source = "currentAirportIata")
     AircraftResponse toResponse(Aircraft aircraft);
     
     List<AircraftResponse> toResponseList(List<Aircraft> aircrafts);
@@ -19,5 +20,7 @@ public interface AircraftMapper {
     @Mapping(target = "status", constant = "AVAILABLE")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "currentAirportIata", source = "currentLocationIata")
+    @Mapping(target = "imageUrl", ignore = true)
     Aircraft toEntity(CreateAircraftRequest request);
 }

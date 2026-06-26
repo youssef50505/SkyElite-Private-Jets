@@ -6,7 +6,9 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import org.jspecify.annotations.Nullable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -50,13 +52,11 @@ public class Flight extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime scheduledArrival;
 
-    @Nullable
     @Column(name = "actual_departure")
-    private LocalDateTime actualDeparture;
+    private @Nullable LocalDateTime actualDeparture;
 
-    @Nullable
     @Column(name = "actual_arrival")
-    private LocalDateTime actualArrival;
+    private @Nullable LocalDateTime actualArrival;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -65,8 +65,25 @@ public class Flight extends BaseEntity {
     @Column(name = "flight_number")
     private String flightNumber;
 
-    @Column(name = "base_price")
-    private java.math.BigDecimal basePrice;
+    @Column(name = "stops_count", nullable = false)
+    private Integer stopsCount = 0;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "flight_amenities", joinColumns = @JoinColumn(name = "flight_id"))
+    @Column(name = "amenity")
+    private List<String> amenities;
+
+    @Column(name = "economy_price")
+    private BigDecimal economyPrice;
+
+    @Column(name = "premium_economy_price")
+    private @Nullable BigDecimal premiumEconomyPrice;
+
+    @Column(name = "business_price")
+    private @Nullable BigDecimal businessPrice;
+
+    @Column(name = "first_class_price")
+    private @Nullable BigDecimal firstClassPrice;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

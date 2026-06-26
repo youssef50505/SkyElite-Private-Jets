@@ -1,54 +1,67 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { LoginRequest, RegisterRequest, JwtResponse } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly API_URL = 'http://localhost:8080/api/auth';
+  private apiUrl = '/api/v1/auth';
   
-  // Reactive State using Angular Signals
-  private currentUserSignal = signal<JwtResponse | null>(null);
+  private tokenSignal = signal<string | null>(localStorage.getItem('token'));
+  private roleSignal = signal<string | null>(localStorage.getItem('role'));
+  private emailSignal = signal<string | null>(localStorage.getItem('email'));
 
-  // Selectors for Components
-  readonly currentUser = this.currentUserSignal.asReadonly();
-  readonly isAuthenticated = computed(() => !!this.currentUserSignal());
-  readonly userRole = computed(() => this.currentUserSignal()?.role || null);
+  constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) {
-    this.loadUserFromStorage();
-  }
-
-  private loadUserFromStorage() {
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      this.currentUserSignal.set(JSON.parse(storedUser));
-    }
-  }
-
-  login(credentials: LoginRequest): Observable<JwtResponse> {
-    return this.http.post<JwtResponse>(`${this.API_URL}/login`, credentials).pipe(
-      tap(response => {
-        localStorage.setItem('currentUser', JSON.stringify(response));
-        localStorage.setItem('token', response.token);
-        this.currentUserSignal.set(response);
+  login(credentials: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
+      tap((response: any) => {
+        this.setSession(response.token, response.role, response.email);
       })
     );
   }
 
-  register(userData: RegisterRequest): Observable<any> {
-    return this.http.post(`${this.API_URL}/register`, userData);
+  register(userData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, userData).pipe(
+      tap((response: any) => {
+        this.setSession(response.token, response.role, response.email);
+      })
+    );
   }
 
-  logout(): void {
-    localStorage.removeItem('currentUser');
+  private setSession(token: string, role: string, email: string) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('role', role);
+    if (email) localStorage.setItem('email', email);
+    this.tokenSignal.set(token);
+    this.roleSignal.set(role);
+    this.emailSignal.set(email);
+  }
+
+  logout() {
     localStorage.removeItem('token');
-    this.currentUserSignal.set(null);
+    localStorage.removeItem('role');
+    localStorage.removeItem('email');
+    this.tokenSignal.set(null);
+    this.roleSignal.set(null);
+    this.emailSignal.set(null);
+  }
+
+  getCurrentUser(): any {
+    const email = this.emailSignal();
+    return email ? { email } : null;
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return this.tokenSignal();
+  }
+
+  getUserRole(): string | null {
+    return this.roleSignal();
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.tokenSignal();
   }
 }

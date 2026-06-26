@@ -1,5 +1,6 @@
 package com.skyelite.backend.entity;
 
+import com.skyelite.backend.entity.enums.LoyaltyStatus;
 import com.skyelite.backend.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,11 +34,18 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String passwordHash;
 
-    @Nullable
     @Column(name = "phone_number")
-    private String phoneNumber;
+    private @Nullable String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "loyalty_status")
+    private @Nullable LoyaltyStatus loyaltyStatus;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "passenger_profile_id")
+    private @Nullable PassengerProfile passengerProfile;
 }

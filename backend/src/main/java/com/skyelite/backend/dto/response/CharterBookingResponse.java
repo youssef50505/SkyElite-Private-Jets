@@ -10,8 +10,10 @@ public record CharterBookingResponse(
         UUID id,
         String bookingReference,
         FlightResponse flight,
+        UserResponse agent,
         LocalDateTime bookingDate,
         String specialRequests,
+        String cabinClass,
         BigDecimal totalAmount,
         CharterBooking.BookingStatus status
 ) {}

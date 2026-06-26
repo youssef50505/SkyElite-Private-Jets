@@ -40,17 +40,18 @@ public class CharterBooking extends BaseEntity {
     @JoinColumn(name = "flight_id", nullable = false)
     private Flight flight;
 
-    @Nullable
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agent_id")
-    private User agent;
+    private @Nullable User agent;
 
     @Column(nullable = false)
     private LocalDateTime bookingDate;
 
-    @Nullable
-    @Column(columnDefinition = "TEXT")
-    private String specialRequests;
+    @Column(name = "special_requests")
+    private @Nullable String specialRequests;
+
+    @Column(name = "cabin_class")
+    private @Nullable String cabinClass;
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;

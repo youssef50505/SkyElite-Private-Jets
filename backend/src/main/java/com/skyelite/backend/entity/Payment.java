@@ -42,17 +42,15 @@ public class Payment extends BaseEntity {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 
-    @Nullable
     @Column(name = "payment_date")
-    private LocalDateTime paymentDate;
+    private @Nullable LocalDateTime paymentDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentMethod paymentMethod;
 
-    @Nullable
     @Column(name = "transaction_reference")
-    private String transactionReference;
+    private @Nullable String transactionReference;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

@@ -20,6 +20,9 @@ public class Airport extends BaseEntity {
     @Column(length = 3, unique = true, nullable = false)
     private String iataCode;
 
+    @Column(unique = true)
+    private @Nullable String icaoCode;
+
     @Column(nullable = false)
     private String name;
 

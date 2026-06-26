@@ -1,0 +1,192 @@
+<div class="min-h-[calc(100vh-80px)] bg-gray-50 dark:bg-gray-900 pt-10 pb-24">
+  <div class="max-w-7xl mx-auto px-6">
+    
+    <!-- Dashboard Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h2 class="text-3xl font-bold text-ink dark:text-white capitalize">Welcome back, {{ userName }}</h2>
+        <p class="text-gray-500 dark:text-gray-400 mt-1">Here is an overview of your upcoming travel and account status.</p>
+      </div>
+      <div class="hidden md:flex items-center gap-3">
+        <button class="btn-secondary flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
+          Preferences
+        </button>
+      </div>
+    </div>
+
+    @if (loading) {
+      <div class="flex flex-col items-center justify-center py-24">
+        <div class="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4"></div>
+        <p class="text-gray-500 dark:text-gray-400 font-medium">Loading your itineraries...</p>
+      </div>
+    } @else {
+      <!-- Top Stats Row -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div class="bg-primary rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+          <div class="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-32 w-32" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div class="relative z-10">
+            <p class="text-white/80 font-medium uppercase tracking-wider text-sm mb-1">Upcoming Flights</p>
+            <p class="text-5xl font-black">{{ upcomingFlights.length }}</p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider text-sm mb-1">Completed Flights</p>
+            <p class="text-4xl font-bold text-ink dark:text-white">{{ pastFlights.length }}</p>
+          </div>
+          <div class="w-12 h-12 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider text-sm mb-1">SkyRewards</p>
+            <p class="text-4xl font-bold text-ink dark:text-white">{{ skyRewards | number }} <span class="text-sm font-medium text-gray-400 dark:text-gray-500">pts</span></p>
+          </div>
+          <div class="w-12 h-12 rounded-full bg-yellow-50 dark:bg-yellow-900/20 flex items-center justify-center text-yellow-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left Column: Next Trip Widget -->
+        <div class="lg:col-span-1">
+          <h3 class="text-xl font-bold text-ink dark:text-white mb-4">Next Trip</h3>
+          
+          @if (nextTrip) {
+            <div class="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-700">
+              <!-- Visual Header -->
+              <div class="relative h-40 bg-gray-900 overflow-hidden flex items-center justify-center">
+                <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Clouds" class="absolute inset-0 w-full h-full object-cover opacity-50" />
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80"></div>
+                
+                <div class="relative z-10 w-full px-6 flex items-center justify-between mt-8">
+                  <div class="text-center">
+                    <div class="text-3xl font-black text-white">{{ nextTrip.flight.departureAirportIata }}</div>
+                  </div>
+                  <div class="flex-grow flex items-center justify-center px-4">
+                    <div class="h-px bg-white/40 flex-grow relative">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-3xl font-black text-white">{{ nextTrip.flight.arrivalAirportIata }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Body -->
+              <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                  <div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Departure</p>
+                    <p class="font-bold text-ink dark:text-white text-lg">{{ nextTrip.flight.scheduledDeparture | date:'MMM d, y' }}</p>
+                    <p class="text-gray-600 dark:text-gray-300">{{ nextTrip.flight.scheduledDeparture | date:'shortTime' }}</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Arrival</p>
+                    <p class="font-bold text-ink dark:text-white text-lg">{{ nextTrip.flight.scheduledArrival | date:'MMM d, y' }}</p>
+                    <p class="text-gray-600 dark:text-gray-300">{{ nextTrip.flight.scheduledArrival | date:'shortTime' }}</p>
+                  </div>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 flex items-center gap-4 mb-6 border border-gray-100 dark:border-gray-700">
+                  <div class="w-12 h-12 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  <div>
+                    <p class="font-bold text-ink dark:text-white">{{ nextTrip.flight.aircraft?.model }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Tail: {{ nextTrip.flight.aircraft?.tailNumber }}</p>
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <button class="btn-primary w-full justify-center">View Itinerary</button>
+                  <button class="btn-secondary w-full justify-center">Prepare for Departure</button>
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-600 p-8 text-center flex flex-col items-center justify-center h-[400px]">
+              <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-400 dark:text-gray-500 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              </div>
+              <h4 class="text-lg font-bold text-ink dark:text-white mb-2">No Upcoming Trips</h4>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">You do not have any flights scheduled.</p>
+              <button class="btn-primary" routerLink="/search">Book a Flight</button>
+            </div>
+          }
+        </div>
+
+        <!-- Right Column: Booking History -->
+        <div class="lg:col-span-2">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-ink dark:text-white">Booking History</h3>
+            <button class="text-primary font-medium hover:text-accent transition text-sm">View All</button>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+            @if (pastFlights.length === 0) {
+              <div class="p-10 text-center">
+                <p class="text-gray-500 dark:text-gray-400">You have no past flights.</p>
+              </div>
+            } @else {
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700 text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      <th class="p-4 font-semibold">Reference</th>
+                      <th class="p-4 font-semibold">Route</th>
+                      <th class="p-4 font-semibold">Date</th>
+                      <th class="p-4 font-semibold">Status</th>
+                      <th class="p-4 font-semibold text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (booking of pastFlights.slice(0, 5); track booking.id) {
+                      <tr class="border-b border-gray-50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/20 transition group">
+                        <td class="p-4">
+                          <span class="font-mono text-sm font-semibold text-ink dark:text-white">{{ booking.bookingReference }}</span>
+                        </td>
+                        <td class="p-4">
+                          <div class="flex items-center gap-2 font-bold text-ink dark:text-white">
+                            {{ booking.flight.departureAirportIata }}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                            {{ booking.flight.arrivalAirportIata }}
+                          </div>
+                        </td>
+                        <td class="p-4">
+                          <div class="text-sm text-gray-600 dark:text-gray-300">{{ booking.flight.scheduledDeparture | date:'MMM d, y' }}</div>
+                        </td>
+                        <td class="p-4">
+                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
+                            {{ booking.status }}
+                          </span>
+                        </td>
+                        <td class="p-4 text-right">
+                          <button class="text-primary hover:text-accent font-medium text-sm flex items-center justify-end gap-1 w-full opacity-0 group-hover:opacity-100 transition-opacity">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            Invoice
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+        </div>
+
+      </div>
+    }
+  </div>
+</div>

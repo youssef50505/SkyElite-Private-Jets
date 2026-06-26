@@ -44,6 +44,21 @@ public class FlightOperationsServiceImpl implements FlightOperationsService {
     }
 
     @Override
+    public List<FlightResponse> searchFlights(String origin, String destination) {
+        return flightMapper.toResponseList(flightRepository.findByDepartureAirportIataAndArrivalAirportIata(origin, destination));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<FlightResponse> getFeaturedEmptyLegs() {
+        return flightMapper.toResponseList(
+            flightRepository.findTop5ByFlightTypeAndStatusOrderByScheduledDepartureAsc(
+                Flight.FlightType.EMPTY_LEG, Flight.FlightStatus.SCHEDULED
+            )
+        );
+    }
+
+    @Override
     @Transactional
     public void updateFlightStatus(UUID flightId, String status) {
         Flight flight = flightRepository.findById(flightId)

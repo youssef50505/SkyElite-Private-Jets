@@ -42,13 +42,11 @@ public class Aircraft extends BaseEntity {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal hourlyRate;
 
-    @Nullable
-    @Column(name = "current_location_iata")
-    private String currentLocationIata;
+    @Column(name = "current_airport_iata")
+    private @Nullable String currentAirportIata;
 
-    @Nullable
     @Column(name = "image_url")
-    private String imageUrl;
+    private @Nullable String imageUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

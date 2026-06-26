@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public record CreateCharterBookingRequest(
         @NotNull UUID flightId,
+        String cabinClass,
         String specialRequests,
         @NotNull @DecimalMin("100.0") BigDecimal totalAmount
 ) {}

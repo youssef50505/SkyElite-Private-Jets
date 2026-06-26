@@ -1,32 +1,29 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface CreateBookingRequest {
-  flightId: string;
-  passengerId: string;
-  agentId?: string;
-  specialRequests?: string;
-}
-
-export interface BookingResponse {
-  id: string;
-  bookingReference: string;
-  bookingDate: string;
-  status: string;
-  totalAmount: number;
-}
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class BookingService {
-  private readonly API_URL = 'http://localhost:8080/api/bookings';
+  private apiUrl = '/api/v1/bookings';
+
   constructor(private http: HttpClient) {}
 
-  createBooking(request: CreateBookingRequest): Observable<BookingResponse> {
-    return this.http.post<BookingResponse>(`${this.API_URL}/charter`, request);
+  createBooking(bookingData: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, bookingData);
   }
-  
-  getBooking(id: string): Observable<BookingResponse> {
-    return this.http.get<BookingResponse>(`${this.API_URL}/${id}`);
+
+  getMyBookings(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/me`);
+  }
+
+  getAllBookings(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
+  }
+
+  updateBookingStatus(reference: string, status: string): Observable<void> {
+    let params = new HttpParams().set('status', status);
+    return this.http.patch<void>(`${this.apiUrl}/${reference}/status`, null, { params });
   }
 }

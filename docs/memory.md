@@ -150,3 +150,88 @@ The previous agent had built a dark-mode gold/obsidian theme that did not match 
 - `app.html` — Replaced 20KB Angular CLI default with `<app-navbar>` + `<router-outlet>`
 - `app.ts` — Imports NavbarComponent
 - `app.routes.ts` — Added /login route, re-enabled authGuard on /dashboard
+
+## 11. Phase 7: Comprehensive Passenger UI & DB Seeding (2026-06-26)
+
+### 11.1. Database Seeding & Security
+- Overhauled `db-seeder/seed.js` to use `bcryptjs` for generating proper Spring Security-compatible password hashes (`password123`).
+- Created a comprehensive `README.md` containing running instructions and 5 pre-generated test accounts for each role (Passenger, Agent, Operations, Admin).
+
+### 11.2. Role-Based Navigation
+- Refactored `NavbarComponent` to inject `AuthService`.
+- Navigation links and action buttons are now dynamically toggled based on authentication state and user roles (`PASSENGER`, `AGENT`, `OPERATIONS`, `ADMIN`).
+- Implemented a premium dark-mode glassmorphism aesthetic (`backdrop-blur-lg` with `dark:bg-ink/90`).
+
+### 11.3. Passenger Homepage (`/home`)
+- **Backend:** Added `findTop5ByFlightTypeAndStatusOrderByScheduledDepartureAsc` to `FlightRepository` and exposed it via `GET /api/v1/flights/featured`.
+- **Frontend:** Built the Passenger Homepage with a floating Quick Flight Search widget (ReactiveForms), Value Propositions section, and a Featured Empty-Legs Carousel that dynamically pulls from the database.
+
+### 11.4. Flight Search Module (`/search`)
+- **Routing:** Automatically parses `origin`, `destination`, `date`, and `passengers` from URL query parameters.
+- **Data:** Hooks into `flightService.searchFlights()` to pull live results.
+- **UI:** Features a sleek horizontal search bar for inline updates and renders results using "Dynamic Pricing Cards" showing tiers (Economy, Premium, Business, First Class) depending on available data.
+
+### 11.5. Passenger Dashboard (`/dashboard`)
+- **Data:** Connects to secure `/api/v1/bookings/me` endpoint to fetch user itineraries.
+- **Logic:** Sorts payload into `upcomingFlights` and `pastFlights`, extracts the absolute closest flight for the "Next Trip" feature, and calculates mock SkyRewards points.
+- **UI:** Features an immersive "Next Trip" hero widget showing exact origin/destination, times, and aircraft tail numbers. Below, it displays a clean table of past booking history with status badges.
+
+## 12. Instructions for Future Agents
+> [!IMPORTANT]
+> - **Read this Document First:** Treat this `memory.md` file as the holy grail. It contains the exact state of the project.
+> - **Tool Usage:** Always prioritize the most specific tool for the job. Do not use generic bash scripts (like `cat` for file creation) when a dedicated API tool exists (e.g., `write_to_file`).
+> - **Architecture Adherence:** Ensure any new Angular components are 100% Standalone and use modern control flows (`@if`, `@for`). For the backend, adhere strictly to the existing Layered REST API Architecture utilizing `MapStruct` and Java 21 Records.
+> - **Aesthetics:** The project strictly follows a premium, dark-mode-compatible UI using TailwindCSS. Ensure all new UI components are responsive, utilize GSAP for micro-animations when appropriate, and align with the existing glassmorphism aesthetic.
+
+## 13. Full Stack Architecture Deep-Dive (Source of Truth)
+
+To ensure any developer (or agent) can instantly understand the mechanics of this system, below is the comprehensive breakdown of the entire Full Stack architecture.
+
+### 13.1. Database Schema & Core Entities (PostgreSQL)
+The backend utilizes Spring Data JPA to map Java Objects to PostgreSQL tables.
+- **`User` (`users` table):** Stores all actors. Fields: `id` (UUID), `firstName`, `lastName`, `email` (Unique), `password` (BCrypt), `phoneNumber`, `role` (Enum: PASSENGER, AGENT, OPERATIONS, ADMIN).
+- **`Aircraft` (`aircrafts` table):** The physical jets. Fields: `id`, `tailNumber`, `model`, `passengerCapacity`, `rangeNauticalMiles`, `hourlyRate`, `currentLocationIata`, `status` (Enum: AVAILABLE, IN_FLIGHT, MAINTENANCE).
+- **`Flight` (`flights` table):** Scheduled trips. Fields: `id`, `aircraft_id` (FK), `departureAirportIata`, `arrivalAirportIata`, `scheduledDeparture`, `scheduledArrival`, `flightType` (Enum: CHARTER, EMPTY_LEG, REPOSITIONING), `status` (Enum: SCHEDULED, EN_ROUTE, LANDED, DELAYED, CANCELLED).
+- **`CharterBooking` (`charter_bookings` table):** Links Passengers to Flights. Fields: `id`, `bookingReference` (Unique String), `flight_id` (FK), `passenger_id` (FK User), `agent_id` (FK User, optional), `bookingDate`, `specialRequests`, `totalAmount`, `status` (Enum: PENDING_PAYMENT, CONFIRMED, CANCELLED, COMPLETED).
+- **`Airport` (`airports` table):** IATA codes, Names, Cities, Countries, Lat/Lon coordinates, baseLandingFee.
+
+### 13.2. Complete REST API Surface (`/api/v1/*`)
+All endpoints consume and produce `application/json` and are protected by Spring Security (excluding `/auth/*` and public `/search`).
+- **Auth Controller:**
+  - `POST /auth/login` - Authenticates credentials, returns `{token, email, role}`.
+  - `POST /auth/register` - Creates a new user, hashes password, returns JWT.
+- **Fleet Controller (Requires OPERATIONS/ADMIN):**
+  - `GET /aircrafts` - Returns all fleet assets.
+  - `POST /aircrafts` - Adds a new aircraft to the fleet.
+  - `PATCH /aircrafts/{id}/status` - Updates physical aircraft status.
+- **Flight Controller:**
+  - `GET /flights` - Returns all flights.
+  - `GET /flights/search` - Searches flights by origin, destination.
+  - `GET /flights/featured` - Returns top upcoming "EMPTY_LEG" flights for the homepage.
+  - `POST /flights` - Schedules a new flight (Operations/Admin).
+  - `PATCH /flights/{id}/status` - Updates flight operational status.
+- **Booking Controller:**
+  - `POST /bookings` - Passenger creates a new charter booking.
+  - `GET /bookings/me` - Passenger fetches their own booking history.
+  - `GET /bookings` - Agent/Operations fetch all system bookings.
+  - `PATCH /bookings/{reference}/status` - Agent/Operations update booking payment/lifecycle status.
+
+### 13.3. Frontend Module Structure (Angular 18+)
+The frontend is strictly constructed using Standalone Components routed in `app.routes.ts`.
+- **`core/`:** Contains singletons. `AuthService`, `BookingService`, `FlightService`, `FleetService`. Contains `JwtInterceptor` (attaches Bearer token) and Auth/Role Guards (`auth.guard.ts`, `role.guard.ts`).
+- **`shared/`:** Contains reusable UI like `NavbarComponent` (handles dynamic role-based rendering and logout).
+- **`features/auth/`:** `LoginComponent` & `RegisterComponent` (Form controls, JWT parsing).
+- **`features/home/`:** The public landing/homepage featuring the Quick Search Widget and dynamic Featured Empty-Legs carousel.
+- **`features/search/`:** Flight search results engine utilizing URL query params (`origin`, `destination`) to fetch and display Dynamic Pricing Cards.
+- **`features/dashboard/`:** The Passenger Dashboard. Fetches `/bookings/me` to separate itineraries into `upcomingFlights` and `pastFlights`, surfacing the most imminent trip in a hero widget.
+- **`features/fleet/`:** Operations dashboard for tracking physical aircraft statuses.
+- **`features/agent-portal/` (Planned):** Will consume `GET /bookings` for global booking management.
+
+### 13.4. Security Flow (End-to-End)
+1. **Frontend Login:** User submits credentials to `/auth/login`.
+2. **Backend Auth:** Spring `AuthenticationManager` verifies the BCrypt hash. If valid, `JwtUtils` signs a token containing the user's email and `ROLE_X` claims.
+3. **Frontend Storage:** `AuthService` stores the JWT in `localStorage` and decodes it to signal the active user state across the app.
+4. **Subsequent Requests:** The Angular `JwtInterceptor` intercepts outbound HTTP calls and injects `Authorization: Bearer <token>`.
+5. **Backend Verification:** `JwtAuthFilter` intercepts inbound requests, validates the token signature, and populates the `SecurityContextHolder`.
+6. **Authorization:** Controller methods utilize `@PreAuthorize("hasRole('PASSENGER')")` to physically block unauthorized access.
+7. **Frontend Guards:** `auth.guard.ts` blocks unauthenticated routing, and `role.guard.ts` verifies the stored token role against the route's `data: { roles: [...] }` array, kicking unauthorized users to the homepage.

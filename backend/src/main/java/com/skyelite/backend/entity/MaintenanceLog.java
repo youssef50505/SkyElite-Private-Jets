@@ -32,11 +32,9 @@ public class MaintenanceLog extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime startDate;
 
-    @Nullable
     @Column(name = "end_date")
-    private LocalDateTime endDate;
+    private @Nullable LocalDateTime endDate;
 
-    @Nullable
     @Column(precision = 10, scale = 2)
-    private BigDecimal cost;
+    private @Nullable BigDecimal cost;
 }

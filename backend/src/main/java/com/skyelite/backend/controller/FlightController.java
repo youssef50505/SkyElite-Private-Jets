@@ -25,6 +25,16 @@ public class FlightController {
         return ResponseEntity.ok(flightOperationsService.getAllFlights());
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<FlightResponse>> searchFlights(@RequestParam String origin, @RequestParam String destination) {
+        return ResponseEntity.ok(flightOperationsService.searchFlights(origin, destination));
+    }
+
+    @GetMapping("/featured")
+    public ResponseEntity<List<FlightResponse>> getFeaturedFlights() {
+        return ResponseEntity.ok(flightOperationsService.getFeaturedEmptyLegs());
+    }
+
     @PostMapping
     @PreAuthorize("hasAnyRole('OPERATIONS', 'ADMIN')")
     public ResponseEntity<FlightResponse> scheduleFlight(@Valid @RequestBody CreateFlightRequest request) {
