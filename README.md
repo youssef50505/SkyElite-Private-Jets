@@ -10,11 +10,17 @@ Welcome to the SkyElite Private Jets web application. This system consists of an
 ## Running the Application
 
 ### Quick Start (Recommended for Windows)
-To launch both the backend and frontend simultaneously with a single click, simply double-click the `start.bat` file in the root directory, or run it from your terminal:
+To launch the entire stack with a single click, simply double-click the `start.bat` file in the root directory.
+
+This robust script will automatically:
+1. Verify Java and Node.js are installed.
+2. Install dependencies for and run the Database Seeder (resetting the DB).
+3. Open a terminal to boot the Spring Boot Backend.
+4. Install dependencies for and launch the Angular Frontend, automatically opening your browser.
+
 ```bat
 .\start.bat
 ```
-This will open two new terminal windows (one for Spring Boot and one for Angular) and automatically launch the application in your browser once compiled.
 
 ---
 
