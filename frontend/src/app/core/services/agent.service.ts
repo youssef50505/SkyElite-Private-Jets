@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AgentService {
-  private apiUrl = '/api/v1/agent';
+  private apiUrl = 'http://localhost:8080/api/v1/agent';
 
   constructor(private http: HttpClient) {}
 
