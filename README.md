@@ -60,10 +60,9 @@ The `db-seeder` automatically generates test users with proper bcrypt-hashed pas
 
 | Role | Email |
 |------|-------|
-| **ADMIN** | Tyler.Koch@gmail.com |
-| **OPERATIONS** | Rosamond_Spinka-Durgan72@gmail.com |
-| **OPERATIONS** | Marilyn_Lang@hotmail.com |
-| **OPERATIONS** | Summer.Quitzon@yahoo.com |
-| **PASSENGER** | Austin.Batz@hotmail.com |
+| **ADMIN** | admin@skyelite.com |
+| **OPERATIONS** | ops@skyelite.com |
+| **AGENT** | agent@skyelite.com |
+| **PASSENGER** | passenger@skyelite.com |
 
-*(Note: These emails are randomly generated each time you run `node seed.js`. If you run the seeder again, simply look at the terminal output to see the new emails!)*
+*(Note: These are static test accounts that are guaranteed to exist after running the database seeder.)*

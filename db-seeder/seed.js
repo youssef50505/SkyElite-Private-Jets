@@ -140,7 +140,36 @@ async function seed() {
     const users = [];
     const roles = ['PASSENGER', 'AGENT', 'OPERATIONS', 'ADMIN'];
     const loyalties = ['NONE', 'SILVER', 'GOLD', 'PLATINUM'];
+
     console.log("\n--- TEST USER ACCOUNTS ---");
+    const staticUsers = [
+      { email: 'admin@skyelite.com', role: 'ADMIN', first: 'Admin', last: 'User' },
+      { email: 'ops@skyelite.com', role: 'OPERATIONS', first: 'Ops', last: 'User' },
+      { email: 'agent@skyelite.com', role: 'AGENT', first: 'Agent', last: 'User' },
+      { email: 'passenger@skyelite.com', role: 'PASSENGER', first: 'Passenger', last: 'User' }
+    ];
+
+    for (let i = 0; i < staticUsers.length; i++) {
+      const su = staticUsers[i];
+      const id = uuid();
+      try {
+        await client.query(`
+          INSERT INTO users (id, first_name, last_name, email, password_hash, phone_number, role, loyalty_status, passenger_profile_id, created_at, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        `, [
+          id, su.first, su.last, su.email, defaultPasswordHash, faker.phone.number(), su.role, 'NONE', profiles[i], now, now
+        ]);
+        users.push(id);
+        console.log(`Role: ${su.role} | Email: ${su.email} | Password: password123`);
+      } catch (err) {
+        // If email already exists, just fetch the existing ID
+        const res = await client.query(`SELECT id FROM users WHERE email = $1`, [su.email]);
+        if (res.rows[0]) users.push(res.rows[0].id);
+        console.log(`Role: ${su.role} | Email: ${su.email} | Password: password123 (Already Exists)`);
+      }
+    }
+    console.log("--------------------------\n");
+
     for (let i = 0; i < 15; i++) {
       const id = uuid();
       const email = faker.internet.email();
@@ -157,7 +186,7 @@ async function seed() {
         faker.phone.number(),
         role,
         faker.helpers.arrayElement(loyalties),
-        profiles[i],
+        profiles[i + staticUsers.length],
         now, now
       ]);
       if (i < 5) console.log(`Role: ${role} | Email: ${email} | Password: password123`);
