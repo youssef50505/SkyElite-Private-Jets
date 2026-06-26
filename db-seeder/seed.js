@@ -235,6 +235,7 @@ async function seed() {
 
     for (let i = 0; i < 15; i++) {
       const id = uuid();
+      const isPastFlight = i < 5; // Make the first 5 flights in the past
       await client.query(`
         INSERT INTO flights (id, aircraft_id, departure_airport_iata, arrival_airport_iata, scheduled_departure, scheduled_arrival, actual_departure, actual_arrival, flight_type, flight_number, economy_price, premium_economy_price, business_price, first_class_price, status, created_at, updated_at)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
@@ -243,16 +244,17 @@ async function seed() {
         faker.helpers.arrayElement(aircrafts),
         faker.helpers.arrayElement(airports),
         faker.helpers.arrayElement(airports),
-        faker.date.future(),
-        faker.date.future(),
-        null, null,
+        isPastFlight ? faker.date.recent({ days: 30 }) : faker.date.future(),
+        isPastFlight ? faker.date.recent({ days: 28 }) : faker.date.future(),
+        isPastFlight ? faker.date.recent({ days: 30 }) : null,
+        isPastFlight ? faker.date.recent({ days: 28 }) : null,
         faker.helpers.arrayElement(flightTypes),
         'SE' + faker.number.int({ min: 100, max: 999 }),
         faker.commerce.price({ min: 500, max: 1500 }),
         faker.commerce.price({ min: 1500, max: 3000 }),
         faker.commerce.price({ min: 3000, max: 6000 }),
         faker.commerce.price({ min: 6000, max: 12000 }),
-        faker.helpers.arrayElement(flightStatuses),
+        isPastFlight ? 'LANDED' : faker.helpers.arrayElement(flightStatuses),
         now, now
       ]);
       
@@ -266,6 +268,40 @@ async function seed() {
     console.log("Generating Charter Bookings...");
     const bookings = [];
     const bookingStatuses = ['PENDING_PAYMENT', 'CONFIRMED', 'COMPLETED', 'CANCELLED'];
+    
+    // Explicitly create bookings for the test passenger (users[3] is passenger@skyelite.com)
+    const testPassengerId = users[3];
+    const testPassengerBookingsCount = 6;
+    
+    // Split flights into past and future based on the logic we just added
+    const pastFlightsArray = flights.slice(6, 11); // The 5 flights we explicitly set to be in the past
+    const futureFlightsArray = flights.slice(0, 6).concat(flights.slice(11, 21));
+
+    for (let i = 0; i < testPassengerBookingsCount; i++) {
+      const id = uuid();
+      const isPast = i < 3; // 3 past flights, 3 future flights
+      const assignedFlightId = isPast ? faker.helpers.arrayElement(pastFlightsArray) : faker.helpers.arrayElement(futureFlightsArray);
+
+      await client.query(`
+        INSERT INTO charter_bookings (id, booking_reference, passenger_id, flight_id, agent_id, booking_date, special_requests, cabin_class, total_amount, status, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+      `, [
+        id,
+        faker.string.alphanumeric(8).toUpperCase(),
+        testPassengerId,
+        assignedFlightId,
+        faker.helpers.arrayElement(users),
+        faker.date.recent(),
+        'Test Booking for Passenger',
+        faker.helpers.arrayElement(['ECONOMY', 'FIRST_CLASS']),
+        faker.commerce.price({ min: 5000, max: 50000 }),
+        isPast ? 'COMPLETED' : 'CONFIRMED',
+        now, now
+      ]);
+      bookings.push(id);
+    }
+
+    // Random bookings for other users
     for (let i = 0; i < 15; i++) {
       const id = uuid();
       await client.query(`
